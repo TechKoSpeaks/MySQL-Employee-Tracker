@@ -3,6 +3,7 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 // const { printTable } = require('console-table-printer');
 const figlet = require("figlet");
+const { Script } = require("vm");
 
 
 
@@ -18,7 +19,7 @@ const connection = mysql.createConnection({
 
 });
 
-figlet("DoughDough Employee Tracker", (err, result) => {
+figlet ("DoughDough Employee Tracker", (err, result) => {
     console.log(err || result);
 });
 
@@ -54,19 +55,31 @@ function start() {
             // Using the answer input, either call the bid or the post functions for input
             switch (answer.action) {
                 case "ADD":
+                    figlet("Time to Add!", (err, result) => {
+                        console.log(err || result);
+                    });
                     addInfo();
                     break;
                 case "VIEW":
+                    figlet("View Time", (err, result) => {
+                        console.log(err || result);
+                    });
                     viewInfo();
                     break;
                 case "UPDATE":
+                    figlet("Let's Update!", (err, result) => {
+                        console.log(err || result);
+                    });
                     updateInfo();
                     break;
                 case "DELETE":
+                    figlet("Just Delete It!", (err, result) => {
+                        console.log(err || result);
+                    });
                     deleteInfo();
                     break;
                 case "Exit":
-                    figlet("Thank you!", (err, result) => {
+                    figlet("Thank you, Bye!", (err, result) => {
                         console.log(err || result);
                     });
                 default:
@@ -80,13 +93,13 @@ function start() {
 // Add in functions for GETTING all data (departments, managers, employees) //
 // Selecting departments, roles, and employees //
 
-getDepartment = () => {
-    connection.query("SELECT id, name FROM department", (err, res) => {
-        if (err) throw err;
-        departments = res;
-        console.log(departments);
-    })
-};
+// getDepartment = () => {
+//     connection.query("SELECT id, name FROM department", (err, res) => {
+//         if (err) throw err;
+//         departments = res;
+//         console.log(departments);
+//     })
+// };
 
 // getRole = () => {
 //     connection.query("SELECT id, title FROM role", (err, res) => {
@@ -106,29 +119,35 @@ getDepartment = () => {
 
 
 
-addInfo = () => {
+function addInfo() {
     inquirer.prompt([
         {
             name: "add",
             type: "list",
-            message: "What would you like to add?",
+            message: "Which category would you like to add?",
             choices: ["DEPARTMENT", "ROLE", "EMPLOYEE", "EXIT"]
         }
     ])
         .then((answer) => {
             // Using the answer input, either call the bid or the post functions for input
-            switch (answer.action) {
+            switch (answer.add) {
                 case "DEPARTMENT":
+                    figlet("Add Departments", (err, result) => {
+                        console.log(err || result);
+                    });
                     addDepartment();
                     break;
                 case "ROLE":
+                    figlet("Role Your Boat!", (err, result) => {
+                        console.log(err || result);
+                    });
                     addRole();
                     break;
                 case "EMPLOYEE":
                     addEmployee();
                     break;
                 case "EXIT":
-                    figlet("Thank you!", (err, result) => {
+                    figlet("Thank you, Bye!", (err, result) => {
                         console.log(err || result);
                     });
                     break;
@@ -142,34 +161,34 @@ addInfo = () => {
         });
 };
 
-// addDepartment = () => {
-//     inquirer.prompt([
-//         {
-//             name: "department",
-//             type: "list",
-//             message: "Which Department are you adding?",
-//             choices: ["Sith Lord", "Sith Officer", "Storm Trooper", "EXIT"]
-//         }
-//     ])
-//     .then((answer) => {
-//         // Using the answer input, either call the bid or the post functions for input
-//         switch (answer.action) {
-//             case "Sith Lord":
-//                 console.log("Adding sith lord");
-//                 break;
-//             case "Sith Officer":
-//                 addRole();
-//                 break;
-//             case "Storm Trooper":
-//                 addEmployee();
-//                 break;
-//             case "EXIT":
-//                 figlet("Thank you!", (err, result) => {
-//                     console.log(err || result);
-//                 });
-//                 break;
-//             default:
-//                 connection.end();
-//         }
-//     })
-// };
+function addDepartment() {
+    inquirer.prompt([
+        {
+            name: "department",
+            type: "list",
+            message: "Which Department are you adding?",
+            choices: ["Sith Lord", "Sith Officer", "Storm Trooper", "EXIT"]
+        }
+    ])
+    .then((answer) => {
+        // Using the answer input, either call the bid or the post functions for input
+        switch (answer.department) {
+            case "Sith Lord":
+                console.log("Adding sith lord");
+                break;
+            case "Sith Officer":
+                addRole();
+                break;
+            case "Storm Trooper":
+                addEmployee();
+                break;
+            case "EXIT":
+                figlet("Thank you!", (err, result) => {
+                    console.log(err || result);
+                });
+                break;
+            default:
+                connection.end();
+        }
+    })
+};
