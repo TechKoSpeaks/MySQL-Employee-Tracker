@@ -1,7 +1,7 @@
 // Import both mySQL and inquirer // 
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-const { start } = require("repl");
+// const { start } = require("repl");
 
 // Create connection for information on the SQL database //
 const connection = mysql.createConnection({
@@ -13,16 +13,16 @@ const connection = mysql.createConnection({
     password: "password",
     database: "employeesDB",
 
-
 });
 
 // Connect to mysql server and established database //
-connection.connect((err)) => {
+connection.connect((err) => {
     if (err) {
-        throw err;
+      throw err;
     }
+    // run the start function after the connection is made to prompt the user
     return start();
-}
+  });
 
 // Create start function to prompt user //
 function start() {
@@ -64,3 +64,5 @@ function start() {
       });
   }
 
+
+  // Add in functions for GETTING all data (departments, managers, employees) //

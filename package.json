@@ -1,0 +1,24 @@
+{
+  "name": "MySQL-Employee-Tracker",
+  "version": "1.0.0",
+  "description": "Instructions Design the following database schema containing three tables:",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TechKoSpeaks/MySQL-Employee-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TechKoSpeaks/MySQL-Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/TechKoSpeaks/MySQL-Employee-Tracker#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}

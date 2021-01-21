@@ -73,14 +73,13 @@ We can frame this challenge as follows:
 As a business owner
 I want to be able to view and manage the departments, roles, and employees in my company
 So that I can organize and plan my business
-How do you deliver this? Here are some guidelines:
 
+
+How do you deliver this? Here are some guidelines:
 
 Use the MySQL NPM package to connect to your MySQL database and perform queries.
 
-
 Use InquirerJs NPM package to interact with the user via the command-line.
-
 
 Use console.table to print MySQL rows to the console. There is a built-in version of console.table, but the NPM package formats the data a little better for our purposes.
 
