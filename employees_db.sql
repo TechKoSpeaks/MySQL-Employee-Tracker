@@ -1,8 +1,8 @@
 
-DROP DATABASE IF EXISTS employeesDB;
-CREATE DATABASE employeesDB;
+DROP DATABASE IF EXISTS employees_db;
+CREATE DATABASE employees_db;
 
-USE employeesDB;
+USE employees_db;
 
 -- Creating a table for the departments with an ID and name, primary key as ID --
 CREATE TABLE department (
