@@ -48,10 +48,11 @@ Uses console.table to print MySQL rows to the console.
 
 
 ## Working Application
-Working App on Heroku:
-![Travis Ko Note Taker](./note-taker-two.gif)
-Testing through Terminal
-![Travis Ko Note Taker](./note-taker.gif)
+Here is a demonstrated video of the application:
+![Employee Tracker](./employee-tracker.webm)
+<br />
+Demonstrated GIF:
+![Travis Ko Note Taker](./employee-tracker.gif)
 
 
 ## License

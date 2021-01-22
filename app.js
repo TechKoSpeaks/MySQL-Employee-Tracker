@@ -69,7 +69,6 @@ function avOptions() {
         figlet("Thank you! Bye now!", (err, result) => {
           console.log(err || result);
         });
-        connection.end();
       }
     })
     .catch((error) => {
@@ -118,8 +117,7 @@ function start() {
             console.log(err || result);
           });
           avOptions();
-        default:
-          connection.end();
+
       }
     })
 }
@@ -144,8 +142,6 @@ function view() {
         return viewEmployees();
       } else if (answer.view === "EXIT") {
         return avOptions();
-      } else {
-        connection.end();
       }
     })
     .catch((error) => {
