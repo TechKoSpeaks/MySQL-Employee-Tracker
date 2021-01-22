@@ -10,52 +10,66 @@ const cTable = require("console.table");
 
 
 //--------------------------CONNECTION-------------------------------//
-    // Create connection for information on the SQL database //
+// Create connection for information on the SQL database //
 const connection = mysql.createConnection({
-    host: "localhost",
-    // Add in port to use
-    port: 3306,
-    // Username and password and databse used //
-    user: "root",
-    password: "password",
-    database: "employees_db",
+  host: "localhost",
+  // Add in port to use
+  port: 3306,
+  // Username, password and database used //
+  user: "root",
+  password: "password",
+  database: "employees_db",
 
 });
 
 // Cool font for showing the employee tracker name//
 figlet("DoughDough Employee Tracker", (err, result) => {
-    console.log(err || result);
+  console.log(err || result);
 });
 
 // Connect to mysql server and established database //
 connection.connect((err) => {
-    if (err) {
-        throw err;
-    }
-    // Run the start function after the connection is made to prompt the user
-    return avOptions();
+  if (err) {
+    throw err;
+  }
+  // Run the start function after the connection is made to prompt the user
+  return avOptions();
 });
 
 
 
 
 //----------------------ADD OR VIEW OVERALL OPTIONS--------------------//
-    // Lists/prompts an option for either adding or viewing info //
+// Lists/prompts an option for either adding or viewing info //
 function avOptions() {
   return inquirer
     .prompt({
       name: "avOptions",
       type: "list",
       message: "Select to ADD or VIEW",
-      choices: ["Add", "View"]
+      choices: ["Add Information", "View Information", "Update Information", "Exit",]
     })
     .then((answer) => {
-      if (answer.avOptions === "Add") {
+      if (answer.avOptions === "Add Information") {
+        figlet("Add stuff!", (err, result) => {
+          console.log(err || result);
+        });
         return start();
-      } else if (answer.avOptions === "View") {
+      } else if (answer.avOptions === "View Information") {
+        figlet("View Info!", (err, result) => {
+          console.log(err || result);
+        });
         return view();
-      } else {
-        connection.end(); 
+      } else if (answer.avOptions === "Update Information") {
+        figlet("Update Time!", (err, result) => {
+          console.log(err || result);
+        });
+        return update();
+      } else if (answer.avOptions === "Exit") {
+        figlet("Thank you! Bye now!", (err, result) => {
+          console.log(err || result);
+        });
+        connection.end();
       }
     })
     .catch((error) => {
@@ -66,53 +80,53 @@ function avOptions() {
 
 
 //---------------------------START FUNCTION------------------------------//
-    // Create start function to prompt user for adding information //
+// Create start function to prompt user for adding information //
 function start() {
-    return inquirer
-        .prompt({
-            name: "action",
-            type: "list",
-            message: "What would you like to do?",
-            choices: [
-                "Add a Department",
-                "Add a role",
-                "Add an Employee",
-                "Exit",
-            ],
-        }).then((answer) => {
-            switch (answer.action) {
-                case "Add a Department":
-                    figlet("Adding Departments!", (err, result) => {
-                        console.log(err || result);
-                    });
-                    addDepartment();
-                    break;
-                case "Add a role":
-                    figlet("Role your Boat!", (err, result) => {
-                        console.log(err || result);
-                    });
-                    addRole();
-                    break;
-                case "Add an Employee":
-                    figlet("Add that Employee!", (err, result) => {
-                        console.log(err || result);
-                    });
-                    addEmployee();
-                    break;
-                case "Exit":
-                    figlet("Back to Menu!", (err, result) => {
-                        console.log(err || result);
-                    });
-                    avOptions();
-                default:
-                    connection.end();
-            }
-        })
+  return inquirer
+    .prompt({
+      name: "action",
+      type: "list",
+      message: "What would you like to do?",
+      choices: [
+        "Add a Department",
+        "Add a role",
+        "Add an Employee",
+        "Exit",
+      ],
+    }).then((answer) => {
+      switch (answer.action) {
+        case "Add a Department":
+          figlet("Adding Departments!", (err, result) => {
+            console.log(err || result);
+          });
+          addDepartment();
+          break;
+        case "Add a role":
+          figlet("Role your Boat!", (err, result) => {
+            console.log(err || result);
+          });
+          addRole();
+          break;
+        case "Add an Employee":
+          figlet("Add that Employee!", (err, result) => {
+            console.log(err || result);
+          });
+          addEmployee();
+          break;
+        case "Exit":
+          figlet("Back to Menu!", (err, result) => {
+            console.log(err || result);
+          });
+          avOptions();
+        default:
+          connection.end();
+      }
+    })
 }
 
 
 //-------------------------------VIEW FUNCTION-------------------------------------//
-    // View function asking user view category (department, roles, employees) //
+// View function asking user view category (department, roles, employees) //
 function view() {
   return inquirer
     .prompt({
@@ -131,7 +145,7 @@ function view() {
       } else if (answer.view === "EXIT") {
         return avOptions();
       } else {
-         connection.end(); 
+        connection.end();
       }
     })
     .catch((error) => {
@@ -140,8 +154,110 @@ function view() {
 }
 
 
+//-------------------------UPDATING EMPLOYEE ROLES--------------------------//
+    // Creating a function for updating employee roles //
+function update() {
+  employeeArray();
+}
+
+function employeeArray() {
+  console.log("Let's Update the Employee.");
+
+  var query =
+    `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
+  FROM employee e
+  JOIN role r
+	ON e.role_id = r.id
+  JOIN department d
+  ON d.id = r.department_id
+  JOIN employee m
+	ON m.id = e.manager_id`
+
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+
+    const employeeChoices = res.map(({ id, first_name, last_name }) => ({
+      value: id, name: `${first_name} ${last_name}`
+    }));
+
+    console.table(res);
+    figlet("Employee Update!", (err, result) => {
+        console.log(err || result);
+      });
+    console.log("employeeArray To Update!\n")
+
+    roleArray(employeeChoices);
+  });
+}
+
+
+// Function for updating the role array for employee //
+function roleArray(employeeChoices) {
+  console.log("Updating this role:");
+
+  var query =
+    `SELECT r.id, r.title, r.salary 
+  FROM role r`
+  let roleChoices;
+
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+
+    roleChoices = res.map(({ id, title, salary }) => ({
+      value: id, title: `${title}`, salary: `${salary}`
+    }));
+
+    console.table(res);
+    figlet("Role Call!", (err, result) => {
+        console.log(err || result);
+      });
+    console.log("Updating this role!\n")
+
+    promptEmployeeRole(employeeChoices, roleChoices);
+  });
+}
+
+
+// Function for prompting which employee, and then setting employee role update //
+function promptEmployeeRole(employeeChoices, roleChoices) {
+
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Which employee is going to be updated with this role?",
+        choices: employeeChoices
+      },
+      {
+        type: "list",
+        name: "roleId",
+        message: "Which role would you like to update? 1=Emperor, 2=Sith Warrior, 3=Sith Attorney, 4=Stormtrooper, 5=Sith HR Specialist, 6=Sith Sweeper, 7=Sith CFO, 8=Sith Salesperson",
+        choices: roleChoices
+      },
+    ])
+    .then(function (answer) {
+
+      var query = `UPDATE employee SET role_id = ? WHERE id = ?`
+      connection.query(query,
+        [answer.roleId,
+        answer.employeeId
+        ],
+        function (err, res) {
+          if (err) throw err;
+          figlet("Updated!", (err, result) => {
+            console.log(err || result);
+          });
+          console.table(res);
+          console.log(res.affectedRows + " Update successful, hurray!");
+          start();
+        });
+    });
+}
+
+
 //-------------------------ADDING DEPARTMENTS------------------------//
-    // Function created for adding new departments in //
+// Function created for adding new departments in //
 function addDepartment() {
   return inquirer
     .prompt([
@@ -152,7 +268,7 @@ function addDepartment() {
       },
     ])
     .then((answer) => {
-    // Based on prompt input, return data with department inserted in table //
+      // Based on prompt input, return data with department inserted in table //
       return connection.query(
         "INSERT INTO department SET ?",
         {
@@ -164,7 +280,7 @@ function addDepartment() {
           }
           figlet("Success!", (err, result) => {
             console.log(err || result);
-        });
+          });
           console.log("This department was added successfully!");
           return avOptions();
         }
@@ -173,7 +289,7 @@ function addDepartment() {
 }
 
 //-------------------------ADDING ROLES------------------------------//
-    // Creating a function for adding in roles in tables //
+// Creating a function for adding in roles in tables //
 function addRole() {
   return inquirer
     .prompt([
@@ -202,7 +318,7 @@ function addRole() {
           }
           figlet("Success!", (err, result) => {
             console.log(err || result);
-        });
+          });
           console.log("Your role was added successfully!");
           return avOptions();
         }
@@ -211,7 +327,7 @@ function addRole() {
 }
 
 //----------------------------ADDING EMPLOYEES------------------------------------//
-    // These are the prompts and functions for adding a new employee //
+// These are the prompts and functions for adding a new employee //
 function addEmployee() {
   return inquirer
     .prompt([
@@ -230,6 +346,7 @@ function addEmployee() {
         type: "input",
         message: "Choose number for role: 1=Emperor, 2=Sith Warrior, 3=Sith Attorney, 4=Stormtrooper, 5=Sith HR Specialist, 6=Sith Sweeper, 7=Sith CFO, 8=Sith Salesperson: "
       },
+
       {
         name: "manager_id",
         type: "input",
@@ -251,7 +368,7 @@ function addEmployee() {
           }
           figlet("Success!", (err, result) => {
             console.log(err || result);
-        });
+          });
           console.log("Your employee was added successfully!");
           return avOptions();
         }
@@ -263,24 +380,24 @@ function addEmployee() {
 
 
 //-------------------------VIEWING FUNCTIONS---------------------------------//
-    // Creating a function for viewing all departments //
+// Creating a function for viewing all departments //
 function viewDepartment() {
-    const query = `SELECT department.name, employee.first_name, employee.last_name
+  const query = `SELECT department.name, employee.first_name, employee.last_name
     FROM employee
     LEFT JOIN department ON department.id = employee.id`;
-    connection.query(query, function (err, res) {
-      if (res) {
-        console.table(res);
-      } else {
-        console.log(err);
-      }
+  connection.query(query, function (err, res) {
+    if (res) {
+      console.table(res);
+    } else {
+      console.log(err);
+    }
     return avOptions();
   });
 }
 
 // Function for viewing roles within the tables //
 function viewRoles() {
-    const query = `SELECT e.id, r.title, d.name AS department, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager
+  const query = `SELECT e.id, r.title, d.name AS department, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager
     FROM employee e
     LEFT JOIN role r
       ON e.role_id = r.id
@@ -288,12 +405,12 @@ function viewRoles() {
     ON d.id = r.department_id
     LEFT JOIN employee m
       ON m.id = e.manager_id`;
-    connection.query(query, function (err, res) {
-      if (res) {
-        console.table(res);
-      } else {
-        console.log(err);
-      }
+  connection.query(query, function (err, res) {
+    if (res) {
+      console.table(res);
+    } else {
+      console.log(err);
+    }
     return avOptions();
   });
 }
@@ -308,12 +425,12 @@ function viewEmployees() {
   ON d.id = r.department_id
   LEFT JOIN employee m
     ON m.id = e.manager_id`;
-    connection.query(query, function (err, res) {
-      if (res) {
-        console.table(res);
-      } else {
-        console.log(err);
-      }
+  connection.query(query, function (err, res) {
+    if (res) {
+      console.table(res);
+    } else {
+      console.log(err);
+    }
     return avOptions();
   });
 }
