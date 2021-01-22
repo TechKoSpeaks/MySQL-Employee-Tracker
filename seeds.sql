@@ -1,44 +1,28 @@
-INSERT INTO top5000 (
-        position,
-        artist,
-        song,
-        year,
-        raw_total,
-        raw_usa,
-        raw_uk,
-        raw_eur,
-        raw_row
-    )
-VALUES (
-        1,
-        "Bing Crosby",
-        "White Christmas",
-        1942,
-        39.903,
-        23.929,
-        5.7,
-        2.185,
-        0.54
-    ),
-    (
-        2,
-        "Bill Haley & his Comets",
-        "Rock Around the Clock",
-        1955,
-        36.503,
-        19.961,
-        7.458,
-        5.663,
-        0.76
-    ),
-    (
-        3,
-        "Celine Dion",
-        "My Heart Will Go On",
-        1998,
-        35.405,
-        12.636,
-        8.944,
-        23.701,
-        3.61
-    );
+INSERT INTO department (name)
+VALUES 
+("Sith Lords"), 
+("Sith Legal Team"), 
+("Sith Minions"), 
+("Sith Human Resources"), 
+("Sith Janitors"), 
+("Sith Finance");
+
+INSERT INTO role (title, salary, department_id)
+VALUES 
+("Emperor", "1000000", "7"),
+("Sith Attorney", "75000", "2"),
+("Stormtrooper", "45000", "3"), 
+("Sith HR Specialist", "60000", "4"),
+("Sith Sweeper", "60000", "5"), 
+("Sith CFO", "70000", "6"), 
+("Sith Salesperson", "40000", "1");
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES 
+("Darth", "Maul", "2", "2"), 
+("Emperor", "Palpatine", "1", "1"), 
+("Joey", "The Janitor", "5", "7"), 
+("GenEric", "Stormtrooper", "3", "6"), 
+("Karen", "Idontcare", "4", "3"), 
+("Will", "Sellyoursoul", "6", "3"), 
+("Ivana", "Belightside", "7", "5");

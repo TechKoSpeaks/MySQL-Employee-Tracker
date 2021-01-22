@@ -1,25 +1,29 @@
-// Import mySQL, inquirer and figlet for aesthetic // 
+
+//--------------------REQUIRE AND CONSTANTS(VARIABLES) DEFINED---------------------//
+// Import mySQL, inquirer for function and figlet for aesthetic // 
+
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-// const { printTable } = require('console-table-printer');
 const figlet = require("figlet");
-const { Script } = require("vm");
+// Requiring table console for generating tables //
+const cTable = require("console.table");
 
 
-
-// Create connection for information on the SQL database //
+//--------------------------CONNECTION-------------------------------//
+    // Create connection for information on the SQL database //
 const connection = mysql.createConnection({
     host: "localhost",
     // Add in port to use
     port: 3306,
-    // Username and password //
+    // Username and password and databse used //
     user: "root",
     password: "password",
     database: "employees_db",
 
 });
 
-figlet ("DoughDough Employee Tracker", (err, result) => {
+// Cool font for showing the employee tracker name//
+figlet("DoughDough Employee Tracker", (err, result) => {
     console.log(err || result);
 });
 
@@ -28,15 +32,41 @@ connection.connect((err) => {
     if (err) {
         throw err;
     }
-    // run the start function after the connection is made to prompt the user
-    start();
-    // getDepartment();
-    // getRole();
-    // getManager();
-    // getEmployee();
+    // Run the start function after the connection is made to prompt the user
+    return avOptions();
 });
 
-// Create start function to prompt user //
+
+
+
+//----------------------ADD OR VIEW OVERALL OPTIONS--------------------//
+    // Lists/prompts an option for either adding or viewing info //
+function avOptions() {
+  return inquirer
+    .prompt({
+      name: "avOptions",
+      type: "list",
+      message: "Select to ADD or VIEW",
+      choices: ["Add", "View"]
+    })
+    .then((answer) => {
+      if (answer.avOptions === "Add") {
+        return start();
+      } else if (answer.avOptions === "View") {
+        return view();
+      } else {
+        connection.end(); 
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+
+    });
+}
+
+
+//---------------------------START FUNCTION------------------------------//
+    // Create start function to prompt user for adding information //
 function start() {
     return inquirer
         .prompt({
@@ -44,151 +74,248 @@ function start() {
             type: "list",
             message: "What would you like to do?",
             choices: [
-                "ADD",
-                "VIEW",
-                "UPDATE",
-                "DELETE",
+                "Add a Department",
+                "Add a role",
+                "Add an Employee",
                 "Exit",
             ],
-        })
-        .then((answer) => {
-            // Using the answer input, either call the bid or the post functions for input
+        }).then((answer) => {
             switch (answer.action) {
-                case "ADD":
-                    figlet("Time to Add!", (err, result) => {
-                        console.log(err || result);
-                    });
-                    addInfo();
-                    break;
-                case "VIEW":
-                    figlet("View Time", (err, result) => {
-                        console.log(err || result);
-                    });
-                    viewInfo();
-                    break;
-                case "UPDATE":
-                    figlet("Let's Update!", (err, result) => {
-                        console.log(err || result);
-                    });
-                    updateInfo();
-                    break;
-                case "DELETE":
-                    figlet("Just Delete It!", (err, result) => {
-                        console.log(err || result);
-                    });
-                    deleteInfo();
-                    break;
-                case "Exit":
-                    figlet("Thank you, Bye!", (err, result) => {
-                        console.log(err || result);
-                    });
-                default:
-                    connection.end();
-            }
-        })
-
-}
-
-
-// Add in functions for GETTING all data (departments, managers, employees) //
-// Selecting departments, roles, and employees //
-
-// getDepartment = () => {
-//     connection.query("SELECT id, name FROM department", (err, res) => {
-//         if (err) throw err;
-//         departments = res;
-//         console.log(departments);
-//     })
-// };
-
-// getRole = () => {
-//     connection.query("SELECT id, title FROM role", (err, res) => {
-//         if (err) throw err;
-//         roles = res;
-//         // console.table(roles);
-//     })
-// };
-
-// getManager = () => {
-//     connection.query("SELECT id, first_name, last_name, CONCAT_WS(' ', first_name, last_name) AS managers FROM employee", (err, res) => {
-//         if (err) throw err;
-//         managers = res;
-//         // console.table(managers);
-//     })
-// };
-
-
-
-function addInfo() {
-    inquirer.prompt([
-        {
-            name: "add",
-            type: "list",
-            message: "Which category would you like to add?",
-            choices: ["DEPARTMENT", "ROLE", "EMPLOYEE", "EXIT"]
-        }
-    ])
-        .then((answer) => {
-            // Using the answer input, either call the bid or the post functions for input
-            switch (answer.add) {
-                case "DEPARTMENT":
-                    figlet("Add Departments", (err, result) => {
+                case "Add a Department":
+                    figlet("Adding Departments!", (err, result) => {
                         console.log(err || result);
                     });
                     addDepartment();
                     break;
-                case "ROLE":
-                    figlet("Role Your Boat!", (err, result) => {
+                case "Add a role":
+                    figlet("Role your Boat!", (err, result) => {
                         console.log(err || result);
                     });
                     addRole();
                     break;
-                case "EMPLOYEE":
-                    addEmployee();
-                    break;
-                case "EXIT":
-                    figlet("Thank you, Bye!", (err, result) => {
+                case "Add an Employee":
+                    figlet("Add that Employee!", (err, result) => {
                         console.log(err || result);
                     });
+                    addEmployee();
                     break;
+                case "Exit":
+                    figlet("Back to Menu!", (err, result) => {
+                        console.log(err || result);
+                    });
+                    avOptions();
                 default:
                     connection.end();
             }
         })
-        .catch((error) => {
-            console.log(error);
-            process.exit(1);
-        });
-};
+}
 
+
+//-------------------------------VIEW FUNCTION-------------------------------------//
+    // View function asking user view category (department, roles, employees) //
+function view() {
+  return inquirer
+    .prompt({
+      name: "view",
+      type: "list",
+      message: "Which category would you like to view?",
+      choices: ["View Employees By Department", "View Employees By Role", "View All Employees", "EXIT"]
+    })
+    .then((answer) => {
+      if (answer.view === "View Employees By Department") {
+        return viewDepartment();
+      } else if (answer.view === "View Employees By Role") {
+        return viewRoles();
+      } else if (answer.view === "View All Employees") {
+        return viewEmployees();
+      } else if (answer.view === "EXIT") {
+        return avOptions();
+      } else {
+         connection.end(); 
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+
+//-------------------------ADDING DEPARTMENTS------------------------//
+    // Function created for adding new departments in //
 function addDepartment() {
-    inquirer.prompt([
-        {
-            name: "department",
-            type: "list",
-            message: "Which Department are you adding?",
-            choices: ["Sith Lord", "Sith Officer", "Storm Trooper", "EXIT"]
-        }
+  return inquirer
+    .prompt([
+      {
+        name: "department",
+        type: "input",
+        message: "Please input the name of the department you would like to add:"
+      },
     ])
     .then((answer) => {
-        // Using the answer input, either call the bid or the post functions for input
-        switch (answer.department) {
-            case "Sith Lord":
-                console.log("Adding sith lord");
-                break;
-            case "Sith Officer":
-                addRole();
-                break;
-            case "Storm Trooper":
-                addEmployee();
-                break;
-            case "EXIT":
-                figlet("Thank you!", (err, result) => {
-                    console.log(err || result);
-                });
-                break;
-            default:
-                connection.end();
+    // Based on prompt input, return data with department inserted in table //
+      return connection.query(
+        "INSERT INTO department SET ?",
+        {
+          name: answer.department
+        },
+        (err) => {
+          if (err) {
+            throw err;
+          }
+          figlet("Success!", (err, result) => {
+            console.log(err || result);
+        });
+          console.log("This department was added successfully!");
+          return avOptions();
         }
-    })
-};
+      );
+    });
+}
+
+//-------------------------ADDING ROLES------------------------------//
+    // Creating a function for adding in roles in tables //
+function addRole() {
+  return inquirer
+    .prompt([
+      {
+        name: "role",
+        type: "input",
+        message: "What is the name of the role that you would like to add?"
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "What is the paying salary for this role/title (numbers please)?"
+      },
+    ])
+    .then((answer) => {
+      // Return and insert a new item into the database with following information //
+      return connection.query(
+        "INSERT INTO role SET ?",
+        {
+          title: answer.role,
+          salary: answer.salary
+        },
+        (err) => {
+          if (err) {
+            throw err;
+          }
+          figlet("Success!", (err, result) => {
+            console.log(err || result);
+        });
+          console.log("Your role was added successfully!");
+          return avOptions();
+        }
+      );
+    });
+}
+
+//----------------------------ADDING EMPLOYEES------------------------------------//
+    // These are the prompts and functions for adding a new employee //
+function addEmployee() {
+  return inquirer
+    .prompt([
+      {
+        name: "first_name",
+        type: "input",
+        message: "Please provide the first name of this employee:"
+      },
+      {
+        name: "last_name",
+        type: "input",
+        message: "What is the last name of the employee you want to add?"
+      },
+      {
+        name: "title",
+        type: "input",
+        message: "Choose number for role: 1=Emperor, 2=Sith Warrior, 3=Sith Attorney, 4=Stormtrooper, 5=Sith HR Specialist, 6=Sith Sweeper, 7=Sith CFO, 8=Sith Salesperson: "
+      },
+      {
+        name: "manager_id",
+        type: "input",
+        message: "What is the manager ID of the employee you want to add (numeric please)?"
+      },
+    ])
+    .then((answer) => {
+      return connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: answer.first_name,
+          last_name: answer.last_name,
+          role_id: answer.title,
+          manager_id: answer.manager_id
+        },
+        (err) => {
+          if (err) {
+            throw err;
+          }
+          figlet("Success!", (err, result) => {
+            console.log(err || result);
+        });
+          console.log("Your employee was added successfully!");
+          return avOptions();
+        }
+      );
+    });
+}
+
+
+
+
+//-------------------------VIEWING FUNCTIONS---------------------------------//
+    // Creating a function for viewing all departments //
+function viewDepartment() {
+    const query = `SELECT department.name, employee.first_name, employee.last_name
+    FROM employee
+    LEFT JOIN department ON department.id = employee.id`;
+    connection.query(query, function (err, res) {
+      if (res) {
+        console.table(res);
+      } else {
+        console.log(err);
+      }
+    return avOptions();
+  });
+}
+
+// Function for viewing roles within the tables //
+function viewRoles() {
+    const query = `SELECT e.id, r.title, d.name AS department, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager
+    FROM employee e
+    LEFT JOIN role r
+      ON e.role_id = r.id
+    LEFT JOIN department d
+    ON d.id = r.department_id
+    LEFT JOIN employee m
+      ON m.id = e.manager_id`;
+    connection.query(query, function (err, res) {
+      if (res) {
+        console.table(res);
+      } else {
+        console.log(err);
+      }
+    return avOptions();
+  });
+}
+
+// Created a function for viewing employees with specifics defined from table (first/last name, etc.) //
+function viewEmployees() {
+  const query = `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager
+  FROM employee e
+  LEFT JOIN role r
+    ON e.role_id = r.id
+  LEFT JOIN department d
+  ON d.id = r.department_id
+  LEFT JOIN employee m
+    ON m.id = e.manager_id`;
+    connection.query(query, function (err, res) {
+      if (res) {
+        console.table(res);
+      } else {
+        console.log(err);
+      }
+    return avOptions();
+  });
+}
+
+
