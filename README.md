@@ -49,7 +49,7 @@ Uses console.table to print MySQL rows to the console.
 
 ## Working Application
 Here is a demonstrated video of the application:
-![Employee Tracker](./employee-tracker.webm)
+![Employee Tracker](https://drive.google.com/file/d/1M6mXIrvzHrRuvIM3iPYXOP0L2XfLc6Ie/view?usp=sharing)
 <br />
 Demonstrated GIF:
 ![Travis Ko Note Taker](./employee-tracker.gif)
